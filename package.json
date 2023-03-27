@@ -1,0 +1,20 @@
+{
+  "name": "dkg-facade",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "author": "irusev",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dkg.js": "github:OriginTrail/dkg.js",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

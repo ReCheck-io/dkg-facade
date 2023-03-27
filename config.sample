@@ -1,0 +1,9 @@
+;
+const config = {
+    server_port: '',
+    OT_NODE_HOSTNAME : '',
+    OT_NODE_PORT : '',
+    PUBLIC_KEY : '',
+    PRIVATE_KEY : '',
+    dkgClient_auth_token : ""
+};
