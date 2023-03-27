@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({
 console.log(config);
 
 
-var server = app.listen(config.server_port,  "localhost", function () {
+var server = app.listen(config.server_port,  function () {
   console.log("DKGFacade listening at http://localhost:%s", server.address().port)
 });
 
