@@ -12,7 +12,7 @@ console.log(config);
 
 
 var server = app.listen(config.server_port,  function () {
-  console.log("DKGFacade listening at http://localhost:%s", server.address().port)
+  console.log("DKGFacade is listening");
 });
 
 
@@ -45,7 +45,7 @@ const publishOptions = {
     blockchain: blockchainOptions
 };
 
-app.get('/node/info', async (req, res) => {
+app.get(config.server_prefix_path + '/node/info', async (req, res) => {
     console.log('send request node.info');
     const nodeInfo = await DkgClient.node.info();
     console.log(nodeInfo);
@@ -53,7 +53,7 @@ app.get('/node/info', async (req, res) => {
 }); 
 
 
-app.post('/asset/create', async function (req, res) {
+app.post(config.server_prefix_path + '/asset/create', async function (req, res) {
     var assetData  = req.body;
     console.log('send request asset.create with \n' + assetData);
     const result = await DkgClient.asset.create(assetData, publishOptions);
@@ -61,14 +61,14 @@ app.post('/asset/create', async function (req, res) {
     res.send(result);
 });
 
-app.post('/asset/read', async (req, res) => {
+app.post(config.server_prefix_path + '/asset/read', async (req, res) => {
     console.log('send request assset.get with \n' + req.body.UAL);
     const result = await DkgClient.asset.get(req.body.UAL);
     console.log(result);
     res.send(result);
 }); 
 
-app.post('/graph/query', async (req, res) => {
+app.post(config.server_prefix_path + '/graph/query', async (req, res) => {
     console.log('send request graph.query with \n' + req.body.form + "\n" + req.body.query);
     const result = await DkgClient.graph.query(req.body.query,req.body.form);
     console.log(result);

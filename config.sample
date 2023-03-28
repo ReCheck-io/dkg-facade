@@ -1,5 +1,6 @@
 ;
 const config = {
+    server_prefix_path: '',
     server_port: '',
     OT_NODE_HOSTNAME : '',
     OT_NODE_PORT : '',
