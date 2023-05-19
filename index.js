@@ -3,10 +3,9 @@ var app = express();
 var bodyParser = require('body-parser');
 var config = require("./config").config();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(bodyParser.json({ limit: '5mb' }));
+app.use(bodyParser.urlencoded({ limit: '5mb', extended: true, parameterLimit: 50000 }));
+
 
 console.log(config);
 
@@ -39,7 +38,7 @@ const DkgClient = new DKG({
 });
 
 const publishOptions = {
-    epochsNum: 2,
+    epochsNum: 50000, 
     maxNumberOfRetries: 30,
     frequency: 1,
     blockchain: blockchainOptions
@@ -50,13 +49,13 @@ app.get(config.server_prefix_path + '/node/info', async (req, res) => {
     const nodeInfo = await DkgClient.node.info();
     console.log(nodeInfo);
     res.send(nodeInfo);
-}); 
-
+});
 
 app.post(config.server_prefix_path + '/asset/create', async function (req, res) {
     var assetData  = req.body;
-    console.log('send request asset.create with \n' + assetData);
+    console.time("DkgClient.asset.create");
     const result = await DkgClient.asset.create(assetData, publishOptions);
+    console.timeEnd("DkgClient.asset.create");
     console.log(result);
     res.send(result);
 });
