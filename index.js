@@ -45,31 +45,56 @@ const publishOptions = {
 };
 
 app.get(config.server_prefix_path + '/node/info', async (req, res) => {
-    console.log('send request node.info');
-    const nodeInfo = await DkgClient.node.info();
-    console.log(nodeInfo);
-    res.send(nodeInfo);
+    logRequest('GET /node/info');
+    const result = await DkgClient.node.info();
+    logResponse(result);
+    res.send(result);
 });
 
 app.post(config.server_prefix_path + '/asset/create', async function (req, res) {
-    var assetData  = req.body;
+    logRequest('POST /asset/create', req);
     console.time("DkgClient.asset.create");
-    const result = await DkgClient.asset.create(assetData, publishOptions);
+    const result = await DkgClient.asset.create(req.body, publishOptions);
     console.timeEnd("DkgClient.asset.create");
-    console.log(result);
+    logResponse(result);
     res.send(result);
 });
 
 app.post(config.server_prefix_path + '/asset/read', async (req, res) => {
-    console.log('send request assset.get with \n' + req.body.UAL);
+    logRequest('POST /asset/read', req);
     const result = await DkgClient.asset.get(req.body.UAL);
-    console.log(result);
+    logResponse(result);
     res.send(result);
 }); 
 
 app.post(config.server_prefix_path + '/graph/query', async (req, res) => {
-    console.log('send request graph.query with \n' + req.body.form + "\n" + req.body.query);
+    logRequest('POST /graph/query', req);
     const result = await DkgClient.graph.query(req.body.query,req.body.form);
-    console.log(result);
+    for (d in result.data) {
+        for (key in result.data[d]) {            
+            if (result.data[d].hasOwnProperty(key)) {
+                if (typeof result.data[d][key] === 'string' || result.data[d][key] instanceof String) {
+                    result.data[d][key] = result.data[d][key].replace(/['"]+/g, '');
+                }               
+            }
+         }
+    }
+    logResponse(result);
     res.send(result);
 });
+
+function logRequest(reqInfo, req) {
+    var json;
+    if(req) {
+        json = req.body;
+    } else {
+        json = "";
+    }
+
+    console.log(new Date().toUTCString() + ' ' + reqInfo + ' :\n\tRequest Body:\n' + JSON.stringify(json, null, 2));
+}
+
+function logResponse(result) {
+    console.log(new Date().toUTCString() + '\tResponse Body : \n' + JSON.stringify(result, null, 2));
+
+}
