@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18-alpine
 WORKDIR /usr/src/dkg-facade
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied

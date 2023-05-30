@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ limit: '5mb', extended: true, parameterLimit: 50
 console.log(config);
 
 
-var server = app.listen(config.server_port,  function () {
+var server = app.listen(config.SERVER_PORT,  function () {
   console.log("DKGFacade is listening");
 });
 
@@ -30,7 +30,7 @@ const DkgClient = new DKG({
     blockchain: blockchainOptions,
     
     auth: {
-        token: config.dkgClient_auth_token
+        token: config.DKGCLIENT_AUTH_TOKEN
     },
 
     maxNumberOfRetries: 30,
@@ -44,14 +44,14 @@ const publishOptions = {
     blockchain: blockchainOptions
 };
 
-app.get(config.server_prefix_path + '/node/info', async (req, res) => {
+app.get(config.SERVER_PREFIX_PATH + '/node/info', async (req, res) => {
     logRequest('GET /node/info');
     const result = await DkgClient.node.info();
     logResponse(result);
     res.send(result);
 });
 
-app.post(config.server_prefix_path + '/asset/create', async function (req, res) {
+app.post(config.SERVER_PREFIX_PATH + '/asset/create', async function (req, res) {
     logRequest('POST /asset/create', req);
     console.time("DkgClient.asset.create");
     const result = await DkgClient.asset.create(req.body, publishOptions);
@@ -60,14 +60,14 @@ app.post(config.server_prefix_path + '/asset/create', async function (req, res) 
     res.send(result);
 });
 
-app.post(config.server_prefix_path + '/asset/read', async (req, res) => {
+app.post(config.SERVER_PREFIX_PATH + '/asset/read', async (req, res) => {
     logRequest('POST /asset/read', req);
     const result = await DkgClient.asset.get(req.body.UAL);
     logResponse(result);
     res.send(result);
 }); 
 
-app.post(config.server_prefix_path + '/graph/query', async (req, res) => {
+app.post(config.SERVER_PREFIX_PATH + '/graph/query', async (req, res) => {
     logRequest('POST /graph/query', req);
     const result = await DkgClient.graph.query(req.body.query,req.body.form);
     for (d in result.data) {
