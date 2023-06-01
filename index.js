@@ -69,7 +69,61 @@ app.post(config.SERVER_PREFIX_PATH + '/asset/read', async (req, res) => {
 
 app.post(config.SERVER_PREFIX_PATH + '/graph/query', async (req, res) => {
     logRequest('POST /graph/query', req);
-    const result = await DkgClient.graph.query(req.body.query,req.body.form);
+    const result = await dkgGraphQuery(req.body.query,req.body.form);
+    logResponse(result);
+    res.send(result);
+});
+
+app.get(config.SERVER_PREFIX_PATH + '/graph/query/organization/monitor/measurement', async (req, res) => {
+    logRequest('POST /graph/query/', req);
+    const query = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \
+                    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \
+                    PREFIX recheck_green_box: <https://ontochain.recheck.io/schema/recheck-green-box/> \
+                    PREFIX recheck_green_box_data: <https://ontochain.recheck.io/> \
+                    SELECT ?organization ?monitorDevice ?timeFrom ?timeTo ?metric ?value ?unit \
+                    WHERE { \
+                        ?organization       rdf:type        recheck_green_box:RecheckOrganization. \
+                        ?organization       recheck_green_box:hasMonitor            ?monitor. \
+                        ?monitor            recheck_green_box:hasMonitorDevice      ?monitorDevice. \
+                        ?monitorDevice      recheck_green_box:makesMeasurement      ?measurement. \
+                        ?measurement        recheck_green_box:hasParameters         ?parameters. \
+                        ?parameters         recheck_green_box:hasDateTimeInterval   ?dateTimeInterval. \
+                        ?dateTimeInterval   recheck_green_box:timeFrom              ?timeFrom; \
+                                            recheck_green_box:timeTo                ?timeTo. \
+                        ?measurement        recheck_green_box:hasMeasurementValue   ?hasValue. \
+                        ?hasValue           recheck_green_box:metric                ?metric; \
+                                            recheck_green_box:value                 ?value; \
+                                            recheck_green_box:unit                  ?unit. \
+                        FILTER (?timeFrom > ${timefrom}) . \
+                        FILTER (?organization = <https://ontochain.recheck.io/${organization}>)  . \
+                    }"
+                    .replace("${timefrom}", req.query.timeFrom)
+                    .replace("${organization}", req.query.organization);
+    const result = await dkgGraphQuery(query,"SELECT");
+    logResponse(result);
+    res.send(result);
+});
+
+
+async function dkgGraphQuery(query, form) {
+    const result = await DkgClient.graph.query(query,form);
+    /*
+        instead of returning : 
+        {
+            "status": "COMPLETED",
+            "data": [
+                {
+                    "organization": "https://ontochain.recheck.io/Recheck",
+                    "monitorDevice": "https://ontochain.recheck.io/867648045407705",
+                    "timeFrom": 1685547699000,
+                    "timeTo": 1685547699000,
+                    "metric": "\"CO2\"",
+                    "value": "\"767.0\"",
+                    "unit": "\"PPM\""
+                }, ...
+        }
+        replace double quotes "unit": "\"PPM\""  >> "unit": "PPM"
+    */
     for (d in result.data) {
         for (key in result.data[d]) {            
             if (result.data[d].hasOwnProperty(key)) {
@@ -79,9 +133,8 @@ app.post(config.SERVER_PREFIX_PATH + '/graph/query', async (req, res) => {
             }
          }
     }
-    logResponse(result);
-    res.send(result);
-});
+    return result;
+}
 
 function logRequest(reqInfo, req) {
     var json;
