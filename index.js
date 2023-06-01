@@ -108,6 +108,7 @@ app.get(config.SERVER_PREFIX_PATH + '/graph/query/organization/monitor/measureme
 function transformForJasperStudio(queryResult) {
     for (d in queryResult.data) {
         queryResult.data[d].monitorDevice = queryResult.data[d].monitorDevice.replace("https://ontochain.recheck.io/", "");        
+        queryResult.data[d].organization = queryResult.data[d].organization.replace("https://ontochain.recheck.io/", "");
     }
 }
 
