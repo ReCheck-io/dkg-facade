@@ -70,7 +70,6 @@ app.post(config.SERVER_PREFIX_PATH + '/asset/read', async (req, res) => {
 app.post(config.SERVER_PREFIX_PATH + '/graph/query', async (req, res) => {
     logRequest('POST /graph/query', req);
     const result = await dkgGraphQuery(req.body.query,req.body.form);
-    logResponse(result);
     res.send(result);
 });
 
@@ -101,7 +100,6 @@ app.get(config.SERVER_PREFIX_PATH + '/graph/query/organization/monitor/measureme
                     .replace("${organization}", req.query.organization);
     const result = await dkgGraphQuery(query,"SELECT");
     transformForJasperStudio(result);
-    logResponse(result);
     res.send(result);
 });
 
