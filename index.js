@@ -74,7 +74,7 @@ app.post(config.SERVER_PREFIX_PATH + '/graph/query', async (req, res) => {
 });
 
 app.get(config.SERVER_PREFIX_PATH + '/graph/query/organization/monitor/measurement', async (req, res) => {
-    logRequest('POST /graph/query/', req);
+    logRequest('POST /graph/query/organization/monitor/measurement', req);
     const query = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> \
                     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \
                     PREFIX recheck_green_box: <https://ontochain.recheck.io/schema/recheck-green-box/> \
@@ -143,11 +143,11 @@ async function dkgGraphQuery(query, form) {
 }
 
 function logRequest(reqInfo, req) {
-    var json;
+    var json = "";
     if(req) {
-        json = req.body;
-    } else {
-        json = "";
+        if (req.body) {
+            json = req.body;
+        }        
     }
 
     console.log(new Date().toUTCString() + ' ' + reqInfo + ' :\n\tRequest Body:\n' + JSON.stringify(json, null, 2));
