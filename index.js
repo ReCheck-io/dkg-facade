@@ -100,20 +100,15 @@ app.get(config.SERVER_PREFIX_PATH + '/graph/query/organization/monitor/measureme
                     .replace("${timefrom}", req.query.timeFrom)
                     .replace("${organization}", req.query.organization);
     const result = await dkgGraphQuery(query,"SELECT");
-    const transformResult = transformForJasperStudio(result);
-    logResponse(transformResult);
-    res.send(transformResult);
+    transformForJasperStudio(result);
+    logResponse(result);
+    res.send(result);
 });
 
 function transformForJasperStudio(queryResult) {
-    const transformResult = { status : queryResult.status, airData : {data : structuredClone(queryResult.data)}};
-    
-    console.log(JSON.stringify(transformResult, null, 2));
-
-    for (d in transformResult.airData.data) {
-        transformResult.airData.data[d].monitorDevice = transformResult.airData.data[d].monitorDevice.replace("https://ontochain.recheck.io/", "");        
+    for (d in queryResult.data) {
+        queryResult.data[d].monitorDevice = queryResult.data[d].monitorDevice.replace("https://ontochain.recheck.io/", "");        
     }
-    return transformResult;
 }
 
 
