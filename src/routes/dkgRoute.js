@@ -23,6 +23,20 @@ router.get('/node/info', async (req, res, next) => {
     lock = false;
 });
 
+router.get('/increaseAllowance', async (req, res, next) => {
+    if(lock) {
+        res.send("Request can not be executed now until previous is completed");
+    }
+    lock = true;
+    try {
+        const result = await dkgService.increaseAllowance();
+        res.send(result);
+    } catch(error) {
+        next(error);
+    }
+    lock = false;
+});
+
 router.post('/asset/create', async function (req, res, next) {
     if(lock) {
         res.send("Request can not be executed now until previous is completed");

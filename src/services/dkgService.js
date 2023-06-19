@@ -72,6 +72,10 @@ async function nodeInfo() {
     return await DkgClient.node.info();
 }
 
+async function increaseAllowance() {
+    return await DkgClient.asset.increaseAllowance('1569429592284014000');
+}
+
 async function create(content) {
     return await DkgClient.asset.create(content, publishOptions);
 }
@@ -114,8 +118,9 @@ function transformForJasperStudio(queryResult) {
 module.exports = {
     queryByOrganizationAndTimeFrom,
     queryByOrganizationAndTimeFromAndTimeTo,
-    queryByOrganizationAndGroupIdAndTimeFromAndTimeTo,
+    queryByOrganizationAndGroupIdAndTimeFromAndTimeTo,    
     nodeInfo,
+    increaseAllowance,
     create,
     readUAL,
     query,
