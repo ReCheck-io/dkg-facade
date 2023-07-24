@@ -7,83 +7,85 @@ var download = require('../utils/download');
 
 const router = express.Router();
 
-let lock = false;
+let lockRead = false;
+
+let lockWrite = false;
 
 router.get('/node/info', async (req, res, next) => {
-    if(lock) {
+    if(lockRead) {
         res.send("Request can not be executed now until previous is completed");
     }
-    lock = true;
+    lockRead = true;
     try {
         const result = await dkgService.nodeInfo();
         res.send(result);
     } catch(error) {
         next(error);
     }
-    lock = false;
+    lockRead = false;
 });
 
 router.get('/increaseAllowance', async (req, res, next) => {
-    if(lock) {
+    if(lockWrite) {
         res.send("Request can not be executed now until previous is completed");
     }
-    lock = true;
+    lockWrite = true;
     try {
         const result = await dkgService.increaseAllowance();
         res.send(result);
     } catch(error) {
         next(error);
     }
-    lock = false;
+    lockWrite = false;
 });
 
 router.post('/asset/create', async function (req, res, next) {
-    if(lock) {
+    if(lockWrite) {
         res.send("Request can not be executed now until previous is completed");
     }
-    lock = true;
+    lockWrite = true;
     try {
         const result = await dkgService.create(req.body);
         res.send(result);
     } catch(error) {
         next(error);
     }
-    lock = false;
+    lockWrite = false;
 });
 
 router.post('/asset/read', async (req, res, next) => {
-    if(lock) {
+    if(lockRead) {
         res.send("Request can not be executed now until previous is completed");
     }
-    lock = true;
+    lockRead = true;
     try {
         const result = await dkgService.readUAL(req.body.UAL);
         res.send(result);
     } catch (error) {
         next(error);
     }
-    lock = false;
+    lockRead = false;
 });
 
 router.post('/graph/query', async (req, res, next) => {
-    if(lock) {
+    if(lockRead) {
         res.send("Request can not be executed now until previous is completed");
     }
-    lock = true;
+    lockRead = true;
     try {
         const result = await dkgService.query(req.body.query,req.body.form);
         res.send(result);
     } catch (error) {
         next(error);
     }
-    lock = false;
+    lockRead = false;
 });
 
 router.get('/graph/query/organization/measurement', async (req, res, next) => {
-    if(lock) {
+    if(lockRead) {
         res.send("Request can not be executed now until previous is completed");
     }
-    lock = true;
+    lockRead = true;
     try {
         if (utils.isBlank(req.query.timeFrom)) {
             throw new Error('timeFrom is blank');
@@ -132,7 +134,7 @@ router.get('/graph/query/organization/measurement', async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-    lock = false;
+    lockRead = false;
 });
 
 

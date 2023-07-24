@@ -2,17 +2,23 @@ var config = require("../config");
 
 const DKG = require('dkg.js');
 
-const blockchainOptions = {
+const blockchainReadOptions = {
     name: 'otp::testnet',
-    publicKey: config.PUBLIC_KEY,
-    privateKey: config.PRIVATE_KEY,
+    publicKey: config.READ_PUBLIC_KEY,
+    privateKey: config.READ_PRIVATE_KEY,
 }
 
-const DkgClient = new DKG({
+const blockchainWriteOptions = {
+    name: 'otp::testnet',
+    publicKey: config.WRITE_PUBLIC_KEY,
+    privateKey: config.WRITE_PRIVATE_KEY,
+}
+
+const DkgWriteClient = new DKG({
     endpoint: config.OT_NODE_HOSTNAME,
     port: config.OT_NODE_PORT,
 
-    blockchain: blockchainOptions,
+    blockchain: blockchainWriteOptions,
 
     auth: {
         token: config.DKGCLIENT_AUTH_TOKEN
@@ -22,11 +28,25 @@ const DkgClient = new DKG({
     frequency: 2
 });
 
-const publishOptions = {
+const DkgReadClient = new DKG({
+    endpoint: config.OT_NODE_HOSTNAME,
+    port: config.OT_NODE_PORT,
+
+    blockchain: blockchainReadOptions,
+
+    auth: {
+        token: config.DKGCLIENT_AUTH_TOKEN
+    },
+
+    maxNumberOfRetries: 30,
+    frequency: 2
+});
+
+const publishWriteOptions = {
     epochsNum: 50000,
     maxNumberOfRetries: 30,
     frequency: 1,
-    blockchain: blockchainOptions
+    blockchain: blockchainWriteOptions
 };
 
 
@@ -69,23 +89,26 @@ const queryByOrganizationAndGroupIdAndTimeFromAndTimeTo = queryBase.replace("${F
                                                         FILTER (?organization = <https://ontochain.recheck.io/${organization}>)  .");                    
 
 async function nodeInfo() {
-    return await DkgClient.node.info();
+    return await DkgReadClient.node.info();
 }
 
 async function increaseAllowance() {
-    return await DkgClient.asset.increaseAllowance('1569429592284014000');
+    return await DkgWriteClient.asset.increaseAllowance('1569429592284014000');
 }
 
 async function create(content) {
-    return await DkgClient.asset.create(content, publishOptions);
+    return await DkgWriteClient.asset.create(content, publishWriteOptions);
 }
 
 async function readUAL(ual) {
-    return await DkgClient.asset.get(ual);
+    return await DkgReadClient.asset.get(ual);
 }
 
 async function query(query, form) {
-    const result = await DkgClient.graph.query(query,form);
+    const result = await DkgReadClient.graph.query(query,form, {
+        maxNumberOfRetries: 500,
+        frequency: 5,
+    });
     /*
         instead of returning :
         {

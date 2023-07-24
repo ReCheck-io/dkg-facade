@@ -7,13 +7,7 @@ var startTime;
 
 function logRequest(req, res, next) {
     startTime = process.hrtime();
-    var reqBody = "";
-    if (!utils.isEmptyObject(req.body)) {
-        reqBody = 'Request Body=\n' + JSON.stringify(req.body, null, 2);
-    }
-
-    console.log(`id=${++logIdIterator} ${new Date().toISOString()} remote=${req.ip} ${req.method}:${req.originalUrl} \n ${reqBody}`);
-
+    console.log(`id=${++logIdIterator} ${new Date().toISOString()} remote=${req.ip} ${req.method}:${req.originalUrl}`);
     next();
 }
 
@@ -34,7 +28,7 @@ function logResponse(req, res, next) {
         var body = Buffer.concat(chunks).toString('utf8');
         var resBody = 'Response Body=\n' + body;
 
-        console.log(`id=${logIdIterator} ${new Date().toISOString()} remote=${req.ip} ${req.method}:${req.originalUrl} status=${res.statusCode} duration=${getActualRequestDurationInMilliseconds(startTime)} ms\n ${resBody.substring(0, 777)} \n....`);
+        console.log(`id=${logIdIterator} ${new Date().toISOString()} remote=${req.ip} ${req.method}:${req.originalUrl} status=${res.statusCode} duration=${getActualRequestDurationInMilliseconds(startTime)} ms \n....`);
         oldEnd.apply(res, arguments);
     };
 
