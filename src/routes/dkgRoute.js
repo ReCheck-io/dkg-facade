@@ -14,6 +14,7 @@ let lockWrite = false;
 router.get('/node/info', async (req, res, next) => {
     if(lockRead) {
         res.send("Request can not be executed now until previous is completed");
+        return;
     }
     lockRead = true;
     try {
@@ -28,6 +29,7 @@ router.get('/node/info', async (req, res, next) => {
 router.get('/increaseAllowance', async (req, res, next) => {
     if(lockWrite) {
         res.send("Request can not be executed now until previous is completed");
+        return;
     }
     lockWrite = true;
     try {
@@ -42,6 +44,7 @@ router.get('/increaseAllowance', async (req, res, next) => {
 router.post('/asset/create', async function (req, res, next) {
     if(lockWrite) {
         res.send("Request can not be executed now until previous is completed");
+        return;
     }
     lockWrite = true;
     try {
@@ -56,6 +59,7 @@ router.post('/asset/create', async function (req, res, next) {
 router.post('/asset/read', async (req, res, next) => {
     if(lockRead) {
         res.send("Request can not be executed now until previous is completed");
+        return;
     }
     lockRead = true;
     try {
@@ -70,6 +74,7 @@ router.post('/asset/read', async (req, res, next) => {
 router.post('/graph/query', async (req, res, next) => {
     if(lockRead) {
         res.send("Request can not be executed now until previous is completed");
+        return;
     }
     lockRead = true;
     try {
@@ -84,6 +89,7 @@ router.post('/graph/query', async (req, res, next) => {
 router.get('/graph/query/organization/measurement', async (req, res, next) => {
     if(lockRead) {
         res.send("Request can not be executed now until previous is completed");
+        return;
     }
     lockRead = true;
     try {
